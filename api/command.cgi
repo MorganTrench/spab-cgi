@@ -75,19 +75,20 @@ if os.environ['REQUEST_METHOD'] == 'DELETE':
 
         # Commit changes
         db.commit()
-        print(
-            '[{"type":"cmdAck"},{"success":"true","message":"Commands completed successfully"}]')
+        print json.dumps(dict(type="cmdAck", success=True,
+                              message="Commands completed successfully"))
     except ValueError:
-        print(
-            '[{"type":"cmdAck"},{"success":"false","message":"JSON could not be decoded"}]')
+        print json.dumps(dict(type="cmdAck", success=False,
+                              message="JSON could not be decoded"))
     except Exception, e:
-        print('[{"type":"cmdAck"},{"success":"false","message":' + str(e) + '}]')
+        print json.dumps(dict(type="cmdAck", success=False, message=str(e)))
 
 if os.environ['REQUEST_METHOD'] == 'GET':
     print "Content-type: application/json\n\n"
     cursor.execute("SELECT * FROM Commands ORDER BY id ASC")
-    data = cursor.fetchall()
-    data = dict(data=[dict(row) for row in data], type="command")
+    commands = cursor.fetchall()
+    commands = [dict(row) for row in commands]
+    data = dict(type="cmdLst", data=commands)
     print json.dumps(data)
 
 # Close database connection

@@ -52,13 +52,14 @@ if os.environ['REQUEST_METHOD'] == 'POST':
         cursor.execute(
             "INSERT INTO Samples (sourceId, timestamp, latitude, longitude, temperature, salinity) VALUES (?, ?, ?, ?, ?, ?)", values)
         db.commit()
-        print(
-            '[{"type":"telemAck"},{"success":"true","message":"Inserted successfully"}]')
+        print json.dumps(dict(type="telemAck", success=True,
+                              message="Inserted successfully"))
     except ValueError:
-        print(
-            '[{"type":"telemAck"},{"success":"false","message":"JSON could not be decoded"}]')
+        print json.dumps(dict(type="telemAck", success=False,
+                              message="JSON could not be decoded"))
     except Exception, e:
-        print('[{"type":"telemAck"},{"success":"false","message":' + str(e) + '}]')
+        print json.dumps(dict(type="telemAck", success=False,
+                              message=str(e)))
 
 if os.environ['REQUEST_METHOD'] == 'GET':
     fromTimestamp = 0  # Default value
